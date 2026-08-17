@@ -118,10 +118,7 @@ await prefs.setBool("isLoggedIn", true);
           ],
         ),
         flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(60),
-            ),
+          decoration: const BoxDecoration(             
             gradient: LinearGradient(
               colors: [
                 Colors.blue,
@@ -328,3 +325,5 @@ await prefs.setBool("isLoggedIn", true);
     );
   }
 }
+
+ 

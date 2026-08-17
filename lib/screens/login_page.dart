@@ -108,7 +108,7 @@ void login() async {
         ),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(60)),
+            // borderRadius: BorderRadius.vertical(bottom: Radius.circular(60)),
             gradient: LinearGradient(
               colors: [Colors.blue, Colors.lightBlueAccent],
               begin: Alignment.topLeft,
@@ -274,3 +274,5 @@ void login() async {
     );
   }
 }
+
+  

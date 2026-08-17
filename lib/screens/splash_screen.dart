@@ -20,45 +20,41 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    // Fade animation controller
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
     );
 
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
-
     _controller.forward();
 
     checkLogin();
   }
 
-   Future<void> checkLogin() async {
-  await Future.delayed(const Duration(seconds: 2));
+  Future<void> checkLogin() async {
+    await Future.delayed(const Duration(seconds: 4));
+    final user = FirebaseAuth.instance.currentUser;
 
-  final user = FirebaseAuth.instance.currentUser;
+    if (!mounted) return;
 
-  if (!mounted) return;
-
-  if (user != null) {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const RecipeListScreen(),
-      ),
-      (route) => false,
-    );
-  } else {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const MyLogin(),
-      ),
-      (route) => false,
-    );
+    if (user != null) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const RecipeListScreen(),
+        ),
+        (route) => false,
+      );
+    } else {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const MyLogin(),
+        ),
+        (route) => false,
+      );
+    }
   }
-}
-
 
   @override
   void dispose() {
@@ -68,30 +64,53 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isDesktop = screenWidth >= 800;
+
     return Scaffold(
+      backgroundColor: Colors.black,  
       body: Stack(
         children: [
-          /// Background Image
-          Positioned.fill(
-            child: Image.asset("assets/images/splash1.png", fit: BoxFit.cover),
+           Positioned.fill(
+            child: Align(
+              alignment: Alignment.center,
+              child: Container(
+                constraints: BoxConstraints(
+                  maxWidth: isDesktop ? 600 : double.infinity, 
+                ),
+                child: Image.asset(
+                  "assets/images/splash1.png",
+                  fit: isDesktop ? BoxFit.contain : BoxFit.cover,
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
+              ),
+            ),
           ),
 
           /// Fade Title
           Align(
             alignment: Alignment.topCenter,
             child: Padding(
-              padding: const EdgeInsets.only(top: 120),
+              padding: EdgeInsets.only(top: isDesktop ? 60 : 120),
               child: FadeTransition(
                 opacity: _animation,
-                child: const Text(
+                child: Text(
                   """TastyVerse,
 Your World of Delicious Recipes""",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 40,
+                    fontSize: isDesktop ? 24 : 40,  
                     fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    letterSpacing: 2,
+                    color: Colors.white,  
+                    letterSpacing: isDesktop ? 1.2 : 2,
+                    shadows: const [
+                      Shadow(
+                        blurRadius: 10,
+                        color: Colors.black,
+                        offset: Offset(0, 2),
+                      )
+                    ],
                   ),
                 ),
               ),

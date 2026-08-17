@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:google_fonts/google_fonts.dart'; 
+import 'package:google_fonts/google_fonts.dart';
 import '../services/login_service.dart';
 import 'details_screen.dart';
 import 'login_page.dart';
- 
 
 class RecipeListScreen extends StatefulWidget {
   const RecipeListScreen({super.key});
@@ -72,10 +71,10 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: InkWell(
-              onTap: () async {              
+              onTap: () async {
                 await LoginService().logout();
 
-                  if (!context.mounted) return;
+                if (!context.mounted) return;
 
                 Navigator.pushAndRemoveUntil(
                   context,
@@ -94,7 +93,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                 ),
               ),
             ),
-          ),           
+          ),
         ],
       ),
       body: isLoading
@@ -135,22 +134,40 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                       ),
                     ),
                   ),
-                ),
+                ), 
 
                 // Recipe Grid
                 Expanded(
-                  child: GridView.builder(
-                    padding: const EdgeInsets.all(16),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.75,
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                       double width = constraints.maxWidth;
+                      int crossAxisCount = 2; // Mobile by default
+                      double childAspectRatio = 0.75;
+
+                      if (width >= 1200) {
+                        crossAxisCount = 5; // Desktop Large: 5 cards
+                        childAspectRatio = 0.85;
+                      } else if (width >= 800) {
+                        crossAxisCount = 4; // Desktop/Laptop: 4 cards
+                        childAspectRatio = 0.80;
+                      } else if (width >= 600) {
+                        crossAxisCount = 3; // Tablet: 3 cards
+                        childAspectRatio = 0.75;
+                      }
+
+                      return GridView.builder(
+                        padding: const EdgeInsets.all(16),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: crossAxisCount,
+                          childAspectRatio: childAspectRatio,
                           crossAxisSpacing: 16,
                           mainAxisSpacing: 16,
                         ),
-                    itemCount: filteredRecipes.length,
-                    itemBuilder: (ctx, i) =>
-                        RecipeCard(recipe: filteredRecipes[i]),
+                        itemCount: filteredRecipes.length,
+                        itemBuilder: (ctx, i) =>
+                            RecipeCard(recipe: filteredRecipes[i]),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -158,7 +175,6 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
     );
   }
 }
-
 class RecipeCard extends StatelessWidget {
   final dynamic recipe;
 
@@ -167,13 +183,14 @@ class RecipeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () {
-           Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => RecipeDetailScreen(recipe: recipe),
-            ),
-          );},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RecipeDetailScreen(recipe: recipe),
+          ),
+        );
+      },
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -240,7 +257,7 @@ class RecipeCard extends StatelessWidget {
             ),
           ],
         ),
-          )
+      ),
     );
   }
 }
